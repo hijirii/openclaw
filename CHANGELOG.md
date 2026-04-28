@@ -12,6 +12,7 @@ Docs: https://docs.openclaw.ai
 
 ### Fixes
 
+- Sandbox/Docker: stop satisfying a missing default sandbox image by tagging plain Debian as `openclaw-sandbox:bookworm-slim`, preserving the Python tooling required by sandbox write/edit helpers and directing users to build the default image. Fixes #51185; refs #45108, #51099, #51609, and #57713. Thanks @dpalis, @Tin55FoilDev, @jbcohen2-coder, @macminihal-cyber, and @PraxoOnline.
 - Agents/models: keep per-agent primary models strict when `fallbacks` is omitted, so probe-only custom providers are not tried as hidden fallback candidates unless the agent explicitly opts in. Fixes #73332. Thanks @haumanto.
 - Cron/Telegram: preserve explicit `:topic:` delivery targets over stale session-derived thread IDs when isolated cron announces to Telegram forum topics. Carries forward #59069; refs #49704 and #43808. Thanks @roytong9.
 - Build/runtime: write the runtime-postbuild stamp after `pnpm build` writes the build stamp, so the next CLI invocation does not re-sync runtime artifacts after a successful build. Fixes #73151. Thanks @bittoby.
