@@ -2111,6 +2111,7 @@ export async function runEmbeddedAttempt(
           await activeSession.steer(text);
         },
         isStreaming: () => activeSession.isStreaming,
+        isStopped: () => aborted || runAbortController.signal.aborted,
         isCompacting: () => subscription.isCompacting(),
         cancel: () => {
           abortRun();
