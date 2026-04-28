@@ -193,6 +193,38 @@ describe("handleChatEvent", () => {
     expect(state.chatMessages).toEqual([]);
   });
 
+  it("keeps active stream for unowned final payloads", () => {
+    const state = createActiveStreamingState();
+    const payload: ChatEventPayload = {
+      sessionKey: "main",
+      state: "final",
+    };
+
+    expect(handleChatEvent(state, payload)).toBe("final");
+    expect(state.chatRunId).toBe("run-user");
+    expect(state.chatStream).toBe("Working...");
+    expect(state.chatStreamStartedAt).toBe(123);
+    expect(state.chatMessages).toEqual([]);
+  });
+
+  it("keeps active stream while appending unowned assistant finals", () => {
+    const state = createActiveStreamingState();
+    const payload: ChatEventPayload = {
+      sessionKey: "main",
+      state: "final",
+      message: {
+        role: "assistant",
+        content: [{ type: "text", text: "Injected note" }],
+      },
+    };
+
+    expect(handleChatEvent(state, payload)).toBe(null);
+    expect(state.chatRunId).toBe("run-user");
+    expect(state.chatStream).toBe("Working...");
+    expect(state.chatStreamStartedAt).toBe(123);
+    expect(state.chatMessages).toEqual([payload.message]);
+  });
+
   it("persists streamed text when final event carries no message", () => {
     const existingMessage = {
       role: "user",
