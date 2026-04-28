@@ -66,6 +66,11 @@ export type ChatHost = ChatInputHistoryState & {
   onSlashAction?: (action: string) => void;
 };
 
+export type ChatSendOptions = {
+  confirmReset?: boolean;
+  restoreDraft?: boolean;
+};
+
 export const CHAT_SESSIONS_ACTIVE_MINUTES = 120;
 export {
   handleChatDraftChange,
@@ -107,6 +112,13 @@ function isChatResetCommand(text: string) {
     return true;
   }
   return normalized.startsWith("/new ") || normalized.startsWith("/reset ");
+}
+
+function confirmChatResetCommand(text: string) {
+  if (!isChatResetCommand(text) || typeof globalThis.confirm !== "function") {
+    return true;
+  }
+  return globalThis.confirm("Start a new session? This will reset the current chat.");
 }
 
 function isBtwCommand(text: string) {
@@ -387,7 +399,7 @@ export function clearPendingQueueItemsForRun(host: ChatHost, runId: string | und
 export async function handleSendChat(
   host: ChatHost,
   messageOverride?: string,
-  opts?: { restoreDraft?: boolean },
+  opts?: ChatSendOptions,
 ) {
   if (!host.connected) {
     return;
@@ -399,6 +411,10 @@ export async function handleSendChat(
   const hasAttachments = attachmentsToSend.length > 0;
 
   if (!message && !hasAttachments) {
+    return;
+  }
+
+  if (messageOverride != null && opts?.confirmReset && !confirmChatResetCommand(message)) {
     return;
   }
 

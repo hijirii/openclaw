@@ -460,7 +460,10 @@ export type AppViewState = {
     handleChatDraftChange: (next: string) => void;
     handleChatInputHistoryKey: (input: ChatInputHistoryKeyInput) => ChatInputHistoryKeyResult;
     resetChatInputHistoryNavigation: () => void;
-    handleSendChat: (messageOverride?: string, opts?: { restoreDraft?: boolean }) => Promise<void>;
+    handleSendChat: (
+      messageOverride?: string,
+      opts?: { confirmReset?: boolean; restoreDraft?: boolean },
+    ) => Promise<void>;
     toggleRealtimeTalk: () => Promise<void>;
     steerQueuedChatMessage: (id: string) => Promise<void>;
     handleAbortChat: () => Promise<void>;
